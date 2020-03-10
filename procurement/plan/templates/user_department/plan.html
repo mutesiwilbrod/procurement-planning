@@ -1,0 +1,369 @@
+{% extends 'user_department/logged-in-base.html' %}
+
+{% load procurement_tags %}
+
+{% block content %}
+	{% with plans=department.plans approved_plans=department.approved_plans unapproved_plans=department.unapproved_plans %}
+		<div class="container-fluid pt-2">
+			<div class="row">			
+				<div class="{% if plan_item %}col-md-9{% else %}col-md-12{% endif %}">
+					<div class="row">
+						<div class="col-md-2 my-auto"><h2>Departmental Plan</h2></div>
+						<div class="col-md-5 d-flex flex-row">
+							<div class="card p-2 {% if department.plan_prepared %}border-info{% else %}border-0{% endif %} my-auto">
+								Preparation
+							</div>
+							<div class="p-2 my-auto fa fa-arrow-right"></div>
+							<div class="card p-2 {% if department.plan_submitted %}border-info{% else %}border-0{% endif %} my-auto">
+								Submission
+							</div>
+							<div class="p-2 my-auto fa fa-arrow-right"></div>
+							<div class="card p-2 {% if department.plan_received %}border-info{% else %}border-0{% endif %} my-auto">
+								Reception
+							</div>
+							<div class="p-2 my-auto fa fa-arrow-right"></div>
+							<div class="card p-2 {% if department.plan_consolidated %}border-info{% else %}border-0{% endif %} my-auto">
+								Consolidation
+							</div>
+						</div>
+						<div class="col-md-5 d-flex flex-row flex-row-reverse">
+							{% if user.profile.department_member.plan_preparation and not department.plan_prepared %}
+								<div class="form-group my-auto">
+									<button class="btn btn-info" style="height: auto" data-toggle="modal" data-target="#addPlanModal"><span class="fa fa-plus"></span> Add Plan</button>
+									<div class="modal fade" id="addPlanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h2>Enter Plan</h2>
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<form method="POST" action="{% url 'plan:add_plan' %}">
+														{{ form.errors }}
+
+														{% csrf_token %}
+
+														<div class="form-group">
+															<small>Chart of Account</small>
+															{{ form.chart_of_account|add_css:"form-control" }}
+														</div>
+
+														<div class="form-group">
+															<small>Type of Procurement</small>
+															{{ form.type_of_procurement|add_css:"form-control" }}
+														</div>
+
+														<div class="form-group">
+															<small>Subject of Procurement</small>
+															{{ form.subject_of_procurement|add_css:"form-control" }}
+														</div>
+
+														<div class="form-group">
+															<small>Quantity</small>
+															{{ form.quantity|add_css:"form-control" }}
+														</div>
+
+														<div class="form-group">
+															<small>Unit of measure</small>
+															{{ form.unit|add_css:"form-control" }}
+														</div>
+
+														<div class="form-group">
+															<small>Estimated Cost</small>
+															{{ form.estimated_cost|add_css:"form-control" }}
+														</div>
+
+														<div class="form-group">
+															<small>Source of Funding</small>
+															<div class="form-control" style="height: auto">
+																{% for radio in form.source_of_funding %}
+																	<div class="myradio">
+																	{{ radio }}
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+
+
+
+														<div class="form-group">
+															<small>Date Rquired</small>
+															<div class="row p-3">
+																<div class="custom-control custom-checkbox col-md-6">
+																	{{ form.date_required_q1|add_attrs:'{"class":"custom-control-input", "id":"q1"}' }}
+																	<label class="custom-control-label" for="q1">Quarter 1</label>
+																</div>
+																<div class="custom-control custom-checkbox col-md-6">
+																	{{ form.date_required_q2|add_attrs:'{"class":"custom-control-input", "id":"q2"}' }}
+																	<label class="custom-control-label" for="q2">Quarter 2</label>
+																</div>
+																<div class="custom-control custom-checkbox col-md-6">
+																	{{ form.date_required_q3|add_attrs:'{"class":"custom-control-input", "id":"q3"}' }}
+																	<label class="custom-control-label" for="q3">Quarter 3</label>
+																</div>
+																<div class="custom-control custom-checkbox col-md-6">
+																	{{ form.date_required_q4|add_attrs:'{"class":"custom-control-input", "id":"q4"}' }}
+																	<label class="custom-control-label" for="q4">Quarter 4</label>
+																</div>
+															</div>
+														</div>
+														<hr>
+														<div class="form-group">
+															<button type="submit" class="btn btn-block btn-info" name="submit">Add Plan</button>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+							<div class="form-group p-1">
+								<small>Budget Sealing</small><br>
+								<label class="border p-2 shadow">{{ department.budget_sealing|comma_separator }}</label>
+							</div>
+							<div class="form-group p-1">
+								<small>Total Planned</small><br>
+								<label class="border p-2 shadow">{{ department.total_amount_planned|comma_separator }}</label>
+							</div>
+						</div>
+					</div>
+					
+					<table class="table table-responsive-sm border">
+						<thead>
+							<th><small>No</small></th>
+							<th><small>Chart of Account</small></th>
+							<th><small>Procurement Type</small></th>
+							<th><small>Subject</small></th>
+							<th><small>Quantity</small></th>
+							<th><small>Unit</small></th>
+							<th><small>Estimated Cost</small></th>
+							<th><small>Funding</small></th>
+							<th colspan="4"><small>Date Required</small></th>
+							<th><small>Status</small></th>
+							<th><small>Action</small></th>
+						</thead>
+						<tbody>
+							{% for plan in plans %}
+								<tr id="row{{plan.id}}" class="{% if plan.consolidate %}table-info{% elif plan.pdu_approved %}table-success{% elif plan.hod_approved %}table-primary{% endif %}">
+									<td>{{ forloop.counter }}</td>
+									<td>{{ plan.chart_of_account.code }}</td>
+									<td>{{ plan.type_of_procurement }}</td>
+									<td>{{ plan.subject_of_procurement }}</td>
+									<td>{{ plan.quantity }}</td>
+									<td>{{ plan.unit_of_measure }}</td>
+									<td>{{ plan.estimated_cost }}</td>
+									<td>{{ plan.source_of_funding }}</td>
+									<td>Q1 {% if plan.date_required_q1 %}<span class="fa fa-check"></span>{% endif %}</td>
+									<td>Q2 {% if plan.date_required_q2 %}<span class="fa fa-check"></span>{% endif %}</td>
+									<td>Q3 {% if plan.date_required_q3 %}<span class="fa fa-check"></span>{% endif %}</td>
+									<td>Q4 {% if plan.date_required_q4 %}<span class="fa fa-check"></span>{% endif %}</td>
+									<td id="statusBox{{plan.id}}">{{ plan.status }}</td>
+									<td>
+										{% if user.profile.department_member.plan_preparation or user.member.hod or user.profile.member.hod %}
+										<button type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										</button>
+										<div class="dropdown-menu dropdown-menu-right p-1" align="center">
+											
+											{% if not department.plan_prepared %}
+												{% if user.profile.department_member.plan_preparation %}
+													<a href="{% url 'plan:edit_plan' id=plan.id %}" class="btn btn-sm btn-secondary btn-block">Edit Plan</a>
+													<button class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#removePlanModal{{plan.id}}">Remove Plan</button>
+												{% endif %}
+											{% endif %}
+
+											{% if department.plan_prepared and not department.plan_submitted %}
+												<div id="approvalBox{{plan.id}}" class="pb-2">
+													{% if user.profile.member.hod %}
+														{% if plan.hod_approved %}
+															<button onclick="hodApprovePlan('{{plan.id}}', 'approvalBox{{plan.id}}', 'statusBox{{plan.id}}', 'row{{plan.id}}')" class="btn btn-sm btn-block btn-danger" id="approveCheck{{plan.id}}">Disapprove</button>
+														{% else %}
+															<button onclick="hodApprovePlan('{{plan.id}}', 'approvalBox{{plan.id}}', 'statusBox{{plan.id}}', 'row{{plan.id}}')" class="btn btn-sm btn-block btn-success" id="approveCheck{{plan.id}}">Approve</button>
+														{% endif %}
+													{% endif %}
+												</div>
+											{% endif %}
+
+											<button class="btn btn-sm btn-info btn-block" data-toggle="modal" data-target="#commentModal{{plan.id}}">Comment</button>
+											<a href="{% url 'plan:plan_details' id=plan.id %}" class="btn btn-sm btn-primary btn-block">View</a>
+										</div>
+
+										<div class="modal fade" id="removePlanModal{{plan.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" id="exampleModalLabel">Confirm Remove</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body">
+													Are you sure you want to remove this plan
+													</div>
+													<div class="modal-footer">
+														<form action="{% url 'plan:remove_plan' %}" method="POST">
+															{% csrf_token %}
+															<input type="hidden" name="plan_item_id" value="{{ plan.id }}" />
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+															<button type="submit" class="btn btn-danger">Remove Plan</button>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="modal fade" id="commentModal{{plan.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<form action="{% url 'plan:comment' id=plan.id %}" method="POST">
+														<div class="modal-body">
+															{% csrf_token %}
+															<input type="hidden" name="plan_item_id" value="{{ plan.id }}" />
+															<label>Comment</label>
+															<textarea class="form-control" name="comment"></textarea>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+															<button type="submit" class="btn btn-info">Comment</button>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+										{% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					
+					</table>
+					{% if plans|length == 0 %}
+					<div align="center">
+						<label class="display-4 text-muted">No Plans Entered!</label>
+						<hr class="w-50">
+						{% if user.profile.member.plan_preparation_role and not plan_item %}
+						<button class="btn btn-info" data-toggle="modal" data-target="#addPlanModal"><span class="fa fa-plus"></span> Add Plan</button>
+						{% endif %}
+					</div>
+					{% endif %}
+					
+					<hr>
+					<div class="row">
+						<div class="container">
+							<div class="login-content" align="center">
+								<h3>Preparation</h3>
+								<div class="card" style="border-radius: 10px;">
+									<div class="card-body">
+									{% with plan_prep_mem=department.get_plan_preparation_member %}
+										{% if plan_prep_mem %}
+										<h5 class="card-title">{{ plan_prep_mem }}</h5>
+										<small class="card-text text-info">{{ plan_prep_mem.title }}</small>
+										{% else %}
+											<label class="text-danger">Role Not Assigned!</label>
+										{% endif %}
+										<hr>
+										
+										Status: <label class="text-info">{% if department.plan_prepared %}Done{% else %}In Progress{% endif %}</label>
+										
+										{% if user.profile.member == plan_prep_mem and not department.plan_prepared and plans|length > 0 %}
+										<hr>
+										<button type="button" class="btn btn-success btn-block" data-target="#finishPreparationModal" data-toggle="modal">Finish Preparation</button>
+										<div id="finishPreparationModal" class="modal fade center">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" id="exampleModalLabel">Finish Preparation</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body">
+														<form action="{% url 'plan:finish_plan_preparation' %}" method="POST">
+															{% csrf_token %}
+															<div class="form-group">
+																<label>Enter Password</label>
+																<input type="password" name="password" class="form-control"/>
+															</div>
+															<hr>
+															<div class="form-group" align="right">
+																<button class="btn btn-success">Finish</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+										{% endif %}
+									{% endwith %}
+									</div>
+								</div>
+							</div>
+
+							<div class="text-center">
+								<span class="fa fa-arrow-down"></span>
+							</div>
+
+							<div class="login-content" align="center">
+								<h3>Approval & Submission</h3>
+								<div class="card" style="border-radius: 10px;">
+									<div class="card-body">
+									{% with hod=department.hod %}
+										{% if hod %}
+										<h5 class="card-title">{{ hod }}</h5>
+										<small class="card-text text-info">{{ hod.title }}</small>
+										{% else %}
+											<label class="text-danger">No Head of Department!</label>
+										{% endif %}
+										<hr>
+										
+										Status: <label class="text-info">{% if department.plan_submitted %}Done{% elif department.plan_prepared and not department.plan_submitted %}In Progress{% elif not department.plan_prepared %}Pending{% endif %}</label>
+										
+										{% if user.profile.member == hod and not department.plan_submitted and department.plan_prepared %}
+											<hr>
+											<button type="button" class="btn btn-success btn-block" data-target="#submitPlansModal" data-toggle="modal">Submit Plans</button>
+											<div id="submitPlansModal" class="modal fade center">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Approve Preparation</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<form action="{% url 'plan:submit_plan' %}" method="POST">
+																{% csrf_token %}
+																<div class="form-group">
+																	<label>Enter Password</label>
+																	<input type="password" name="password" class="form-control"/>
+																</div>
+																<hr>
+																<div class="form-group" align="right">
+																	<button class="btn btn-success">Submit Plan</button>
+																</div>
+															</form>
+														</div>
+													</div>
+												</div>
+											</div>
+										
+										{% endif %}
+									{% endwith %}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endwith %}
+{% endblock %}

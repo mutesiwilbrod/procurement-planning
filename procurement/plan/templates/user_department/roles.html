@@ -1,0 +1,28 @@
+{% extends 'user_department/logged-in-base.html' %}
+
+{% load procurement_tags %}
+
+{% block content %}	
+		{% with members=department.get_members %}
+			<div class="container">
+				<h1>Roles</h1>
+				<div class="card">
+					<h5 class="card-header">1. Plan Preparation</h5>
+					<div class="card-body">
+						<form method="POST" action="{% url 'plan:assign_preparation_role' %}">
+							{% csrf_token %}
+							{% for member in members %}
+								<div class="custom-control custom-radio custom-control-inline">
+									<input type="radio" id="plan_preparation{{member.id}}" name="plan_preparation" value="{{member.profile.department_member.id}}" class="custom-control-input" {% if member.profile.department_member.plan_preparation %}checked{% endif %}>
+									<label class="custom-control-label" for="plan_preparation{{member.id}}">{{ member }}</label>
+								</div>
+							{% endfor %}
+							<button><span class="fa fa-save"></span>Save</button>
+						</form>
+					</div>
+				</div>		
+			</div>
+		{% endwith %}
+	</div>
+
+{% endblock %}

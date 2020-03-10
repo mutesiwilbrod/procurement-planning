@@ -1,0 +1,86 @@
+{% extends 'user_department/logged-in-base.html' %}
+
+{% load procurement_tags %}
+
+{% block content %}
+	<div class="container">
+		<div class="login-content">		
+			{% if plan_item %}
+				<form method="POST" class="p-2 card shadow" action="{% url 'plan:edit_plan' id=plan_item.id %}">
+					<h2>Edit Plan</h2>
+					<hr>
+					{% csrf_token %}
+					<div class="form-group">
+						<small>Chart of Account</small>
+						<select class="form-control" name="chart_of_account">
+							{% for id, expense in expenses %}
+								<option value="{{id}}" {% if plan_item.chart_of_account.id == id %}selected{% endif %}>{{expense}}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="form-group">
+						<small>Chart of Account</small>
+						
+						<select class="form-control" name="type_of_procurement">
+							{% for id, procurement_type in procurement_types %}
+								<option value="{{id}}" {% if plan_item.type_of_procurement.id == id %}selected{% endif %}>{{procurement_type}}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="form-group">
+						<small>Subject of Procurement</small>
+						<input type="text" name="subject_of_procurement" value="{{ plan_item.subject_of_procurement }}" class="form-control"/>
+					</div>
+
+					<div class="form-group">
+						<small>Quantity</small>
+						<input type="number" name="quantity" value="{{ plan_item.quantity }}" class="form-control"/>
+					</div>
+
+					<div class="form-group">
+						<small>Unit of measure</small>
+						<input type="text" name="unit_of_measure" value="{{ plan_item.unit_of_measure }}" class="form-control"/>
+					</div>
+
+					<div class="form-group">
+						<small>Estimated Cost</small>
+						<input type="text" name="estimated_cost" value="{{ plan_item.estimated_cost }}" class="form-control"/>
+					</div>
+
+					<div class="form-group">
+						<small>Source of Funding</small>
+						<input type="text" name="source_of_funding" value="{{ plan_item.source_of_funding }}" class="form-control"/>
+					</div>
+
+					<div class="form-group">
+						<small>Date Rquired</small>
+						<div class="row p-3">
+							<div class="custom-control custom-checkbox col-md-6">
+								<input type="checkbox" name="date_required_q1" class="custom-control-input" id="q1" {% if plan_item.date_required_q1 %}checked{% endif %}/>
+								<label class="custom-control-label" for="q1">Quarter 1</label>
+							</div>
+							<div class="custom-control custom-checkbox col-md-6">
+								<input type="checkbox" name="date_required_q2" class="custom-control-input" id="q2" {% if plan_item.date_required_q2 %}checked{% endif %}/>
+								<label class="custom-control-label" for="q2">Quarter 2</label>
+							</div>
+							<div class="custom-control custom-checkbox col-md-6">
+								<input type="checkbox" name="date_required_q3" class="custom-control-input" id="q3" {% if plan_item.date_required_q3 %}checked{% endif %}/>
+								<label class="custom-control-label" for="q3">Quarter 3</label>
+							</div>
+							<div class="custom-control custom-checkbox col-md-6">
+								<input type="checkbox" name="date_required_q4" class="custom-control-input" id="q4" {% if plan_item.date_required_q4 %}checked{% endif %}/>
+								<label class="custom-control-label" for="q4">Quarter 4</label>
+							</div>
+						</div>
+					</div>
+					<hr>
+					<div class="form-group">
+						<button type="submit" class="btn btn-block btn-info" name="submit">Update Plan</button>
+					</div>
+				</form>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

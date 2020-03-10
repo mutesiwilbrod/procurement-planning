@@ -1,0 +1,92 @@
+{% extends 'global/base.html' %}
+
+{% load staticfiles %}
+
+{% block body %}
+	<div class="container">
+			<div class="login-content">
+				<div align="center">
+					<img width="300" src="{% static 'img/logo.png' %}" align="center" alt="PPDA logo" />
+				</div>
+				<div id="message">
+					{% if messages %}
+						{% for message in messages %}
+							<div class="alert alert-{{ message.tags }} text-center font-weight-bold alert-dismissible" role="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								{{ message }} 
+							</div>
+						{% endfor %}
+					{% endif %}
+				</div>
+
+				{% if testing %}
+
+					<div class="login-form card bg-light shadow" align=center>
+						<h1>User Testing</h1>
+						<hr>
+						<h4>Procurement and Disposal</h4>
+						<form method="POST" action="{% url 'plan:login' %}">
+							{% csrf_token %}
+							<input type="hidden" name="username" value="pdu1@muni.ac.ug">
+							<input type="hidden" name="password" value="123">
+							<button class="btn btn-danger btn-block">Head of PDU <span class="fa fa-sign-in"></span></button>
+						</form>
+
+						<form method="POST" action="{% url 'plan:login' %}">
+							{% csrf_token %}
+							<input type="hidden" name="username" value="pdu2@muni.ac.ug">
+							<input type="hidden" name="password" value="123">
+							<button class="btn btn-danger btn-block w-75">Member of PDU <span class="fa fa-sign-in"></span></button>
+						</form>
+
+						<hr>
+
+						<h4>Faculty of Education</h4>
+
+						<form method="POST" action="{% url 'plan:login' %}">
+							{% csrf_token %}
+							<input type="hidden" name="username" value="educ1@muni.ac.ug">
+							<input type="hidden" name="password" value="123">
+							<button class="btn btn-info btn-block">Head of Faculty of Education <span class="fa fa-sign-in"></span></button>
+						</form>
+
+						<form method="POST" action="{% url 'plan:login' %}">
+							{% csrf_token %}
+							<input type="hidden" name="username" value="educ2@muni.ac.ug">
+							<input type="hidden" name="password" value="123">
+							<button class="btn btn-info btn-block w-75">Member of Faculty of Education <span class="fa fa-sign-in"></span></button>
+						</form>
+
+					</div>
+
+				{% else %}
+
+					<div class="login-form card bg-light shadow">
+						<form method="POST" action="{% url 'plan:login' %}">
+							{% csrf_token %}
+							<div class="form-group">
+								<label class="form-check-label">Username</label>
+								<input class="form-control shadow" type="text" name="username" required>
+							</div>
+
+							<div class="form-group">
+								<label class="form-check-label">Password</label>
+								<input class="form-control shadow" type="password" name="password" required>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group" align="right">
+										<button class="btn btn-success border" type="submit" value="Login">Signin <span class="fa fa-sign-in"></span></button>
+									</div>
+								</div>
+								
+							</div>
+						</form>
+					</div>
+
+				{% endif %}
+			</div>
+	</div>
+{% endblock %}

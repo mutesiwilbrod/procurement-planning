@@ -1,0 +1,212 @@
+{% extends 'user_department/logged-in-base.html' %}
+
+{% load procurement_tags %}
+
+{% block content %}
+
+	<div class="container-fluid">
+        <hr>
+		<div class="row">
+			<div class="col-md-4 bg-light">
+                <div>
+                    Actions
+                    <hr class="my-2">
+                    <table class="table table-sm border table-hover table-dark" style="cursor: pointer;">
+                        <tbody style="font-size: 12px;" class="font-weight-bold">
+                                {% for action in plan.actions %}
+                                    <tr class="text-{{action.initiation.tag}}">
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ action.date }}</td>
+                                        <td>{{ action.action }}</td>
+                                        <td>{{ action.member }}</td>
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <h4>Next Action <span class="fa fa-forward text-danger"></span></h4>
+                <div class="form-group card shadow p-2">
+                    <small class="text-info">Action</small>
+                    <label class="form-control form-control-sm" style="height: auto">
+                        Approval by Authorised Officer
+                    </label>
+
+                    <small class="text-info">Descrition</small>
+                    <label class="form-control form-control-sm" style="height: auto">
+                        <strong>Procurement is approved in the budget</strong>
+                        <br>
+                        For the purposes of subregulation (1), a user department shall, based on the approved budget of the procuring and disposing entity, prepare the procurement plan for the user department, and submit it to the procurement and disposing unit.
+                        <br>
+                        <strong>Reg.3(2) PPDA (PDEs) Regs, 2014.</strong>
+                    </label>
+                </div>
+			</div>
+
+			<div class="col-md-5">
+
+                <div class="row" id="requisition">
+                    <div id="title-div"></div>
+                    <table class="table table-responsive-sm">
+                        <tr>
+                            <th style="border: 1px solid black;" class="text-center" colspan="4">Procurement Plan</th>
+                        </tr>
+                        <tr class="text-center">
+                            <th style=" border: 1px solid black;">Procuring and Disposing Entity</th>
+                            <th style=" border: 1px solid black;">Financial year</th>
+                        </tr>
+                        <tr class="text-center">
+                            <td style=" border: 1px solid black;" class="text-info">{{ user.profile.member.user_department.sub_programme.programme.entity }}</td>
+                            <td style=" border: 1px solid black;" class="text-info">2019/2020</td>
+                        </tr>
+                    </table>
+
+                    <table class="table table-hover table-sm table-responsive-sm">
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">User Department</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{{ plan.user_department }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Chart of Account</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{{ plan.chart_of_account }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Type of Procurement</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{{ plan.type_of_procurement }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Quantity</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{{ plan.quantity }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Unit of Measure</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{{ plan.unit_of_measure }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Estimated Cost</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{{ plan.estimated_cost }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Source of Funding</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{{ plan.source_of_funding }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">PREPARED</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{% if plan.prepared %}YES{% else %}NO{% endif %}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">APPROVED (HOD)</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{% if plan.hod_approved %}YES{% else %}NO{% endif %}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">APPROVED (PDU)</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{% if plan.pdu_approved %}YES{% else %}NO{% endif %}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">CONSOLIDATED</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">{% if plan.consolidated %}YES{% else %}NO{% endif %}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Initiation</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2"></td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Bid Invitation</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2"></td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Bid Opening and Closing</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2"></td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Approval of Evaluation</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2"></td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Award Notification</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2"></td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Contract Signing</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2"></td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2">Contract Completion</td>
+                            <td style="border: 1px solid black;" class="text-center" colspan="2"></td>
+                        </tr>
+                    </table>
+                </div>
+			</div>
+
+			<div class="col-md-3 bg-light">
+				<div class="my-1">
+                    Comments
+                    <button class="btn btn-sm btn-info float-right" data-toggle="modal" data-target="#commentModal{{plan.id}}">Comment</button>
+                    <div class="modal fade" id="commentModal{{plan.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{% url 'plan:comment' id=plan.id %}" method="POST">
+                                    <div class="modal-body">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="plan_item_id" value="{{ plan.id }}" />
+                                        <label>Comment</label>
+                                        <textarea class="form-control" name="comment"></textarea>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-info">Comment</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-2">
+                {% for comment in plan.comments %}
+    				<div class="form-group card shadow p-2">
+                        <small style="height: auto">
+                            <strong>{{ comment.member }}</strong> ({{ comment.member.title }})
+                        </small>
+                        <label class="form-control form-control-sm" style="height: auto">
+                            {{ comment.comment }}
+                        </label>
+                        <small class="text-info" align="right">
+                            {{ comment.date }}
+                        </small>
+                    </div>
+                {% endfor %}
+                <div align="center">
+                    {% if plan.comments|length == 0 %}
+                        <label class="text-info">No Comments</label>
+                    {% endif %}
+                </div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

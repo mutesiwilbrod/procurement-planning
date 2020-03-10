@@ -1,0 +1,119 @@
+{% extends 'global/base.html' %}
+
+{% load staticfiles %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="row fixed bg-info text-white shadow" style="z-index: 1000">
+		<div class="col-md-10 my-auto p-0" style="font-size: 2rem;">
+			<img width="120" src="{% static 'img/logo.png' %}" class="img-thumbnail rounded-circle p-4 m-2" align="center" alt="PPDA logo"/>
+			{{ user.profile.member.user_department }}
+		</div>
+
+		<div class="col-md-2 my-2" align="right">
+			{% with notifications=user.profile.get_notifications %}
+				<div class="btn-group">
+					<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{% if notifications|length %} <span class="badge badge-pill badge-danger">{{notifications|length}}</span> {% endif %} <span class="fa fa-bell"></span>
+					</button>
+
+					<div class="dropdown-menu dropdown-menu-large row dropdown-menu-right px-2" width="200px" align="center">
+						<div class="container">
+							{% if notifications|length == 0 %}
+							<div align="center" class="p-0">
+								<label class="text-center">No Nofications</label>
+							</div>
+							{% else %}
+								{% for notification in notifications %}
+									<a onclick="deleteNotification({{notification.id}})" href="" class="btn btn-light btn-sm btn-block my-1 border border-info">
+										{{ notification.title }}
+									</a>
+								{% endfor %}
+							{% endif %}
+						</div>
+					</div>
+
+				</div>
+			{% endwith %}
+
+			<div class="btn-group">
+				<button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span class="fa fa-navicon"></span> Menu
+				</button>
+				<div class="dropdown-menu dropdown-menu-right">
+					{% if user.is_authenticated %}						
+						<div class="p-1">
+							<a href="{% url 'plan:plan' %}" class="btn btn-info btn-block my-1">
+								<span class="fa fa-book"></span>
+								<hr>
+								Plans
+							</a>
+							<div class="dropdown-divider"></div>
+
+							{% if user.profile.pdu_member or user.profile.head_of_pdu %}
+							<a href="{% url 'plan:department_plans' id=user.profile.member.user_department.id %}" class="btn btn-light border border-secondary btn-block my-1">
+								<span class="fa fa-book"></span>
+								<hr>
+								Plan Submissions
+							</a>
+							<div class="dropdown-divider"></div>
+
+							<a href="{% url 'plan:plan_consolidation' %}" class="btn alert-info border-info btn-block my-1">
+								<span class="fa fa-book"></span>
+								<hr>
+								Consolidation
+							</a>
+							<div class="dropdown-divider"></div>
+							{% endif %}
+
+							{% if user.profile.member.hod %}
+							<a href="{% url 'plan:roles' %}" class="btn btn-secondary btn-block my-1">
+								<span class="fa fa-users"></span>
+								<hr>
+								Member Roles
+							</a>
+							<div class="dropdown-divider"></div>
+							{% endif %}
+
+
+							<a href="" class="btn btn-success btn-block my-1">
+								<span class="fa fa-user"></span> <hr> Account
+							</a>
+
+							<div class="dropdown-divider"></div>
+
+							<a href="{% url 'plan:logout' %}" class="btn btn-warning btn-block my-1">
+								<span class="fa fa-sign-out"></span>
+								<hr>
+								Logout
+							</a>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		{% if messages %}
+			{% for message in messages %}
+				<div class="w-100 alert alert-{{ message.tags }} text-center font-weight-bold alert-dismissible">
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times</span>
+					</button>
+					{{ message }} 
+				</div>
+			{% endfor %}
+		{% endif %}
+	</div>
+
+
+
+	<div class="row">
+		{% block content %}
+		{% endblock %}
+	</div>
+</div>
+{% endblock %}
+
+<hr>

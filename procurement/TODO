@@ -1,0 +1,38 @@
+TODO => make the new model diagram
+TODO =>  make dummy data
+TODO =>  login all users
+    ao, pdu_head, pdu_member, vote_controller, hod, user
+TODO =>  templates
+    - main drop down menu
+        hod - department_plans
+            - roles
+                - 'user-roles.html'
+        user - department plans
+            if user has plan_prep_role => should have "GO TO PREPARATION" button which renders plan preparation template
+                so we shall have 'plan_preparation.html', 'department-plans.html'
+        pdu_head - entity plans
+                    - 'entity-plans.html'
+                 - department plans
+                    - 'department-plans.html'
+                 - roles
+                    - 'pdu-roles.html'
+        pdu_member - department plans
+                     - department-plans.html'
+            if pdu_member has plan_consolidation_role =>
+                 - consolidation - 'consolidation.html'
+        ao - entity plans
+                - 'entity-plans.html'
+           - department plans
+                 - department plans.html
+    1. make sure all menus are good for each user
+    2. make sure all menus work for each user
+
+
+TODO => __init__ for all db objects
+
+
+todo => AJAX on assigning roles
+todo => make sure atleast one quarter is checked
+todo => save and view actions of each plan
+todo => make a javascript flash function to show AJAX response messages
+todo => try everything with some real data

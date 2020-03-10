@@ -1,0 +1,36 @@
+.login-form {
+  background: #ffffff;
+  padding: 30px 30px 20px;
+  border-radius: 2px; }
+
+  .login-content {
+  max-width: 540px;
+  margin: 2vh auto; }
+
+  aside.left-panel {
+  background: #4e4e52;
+  display: table-cell;
+  height: 100vh;
+  min-height: 100%;
+  padding: 0px 0px;
+  vertical-align: top;
+  width: 200px;
+  -webkit-transition:width 0.3s ease;
+  transition: width 0.3s ease; }
+
+  .right-panel {
+  display: table-cell;
+  padding-left: 0 !important;
+  -webkit-transition: all 0.35s ease;
+  transition: all 0.35s ease; }
+
+
+.fixed{
+  position:sticky;
+  top:0;
+  z-index:108374;
+}
+
+a{
+    text-decoration: none;
+}

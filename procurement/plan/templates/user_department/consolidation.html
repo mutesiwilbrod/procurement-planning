@@ -1,0 +1,102 @@
+{% extends 'user_department/logged-in-base.html' %}
+
+{% load procurement_tags %}
+
+{% block content %}
+		<div class="container-fluid pt-2">
+			<div class="row">
+				<div class="col">
+					<h2>Consolidation</h2>
+				</div>
+			</div>
+
+			<div class="row px-3">
+				<table class="table table-sm table-bordered">
+					<thead>
+						<tr class="text-center">
+							<th scope="col"><small>No</small></th>
+							<th scope="col"><small>Subject of Procuremet</small></th>
+							<th scope="col"><small>Currency</small></th>
+							<th scope="col"><small>Estimated Cost</small></th>
+							<th scope=""><small>Source of Funding</small></th>
+							<th scope=""><small>Procurement Method</small></th>
+							<th scope=""><small>Contract Type</small></th>
+							<th scope=""><small>PREQUALIFICATION(YES/NO)</small></th>
+							<th scope=""><small>Bid invitation date</small></th>
+							<th scope=""><small>Bid closing/Opening date</small></th>
+							<th scope=""><small>Approval evaluation date</small></th>
+							<th scope=""><small>Award notification date</small></th>
+							<th scope=""><small>Contract signing date</small></th>
+							<th scope=""><small>completion date</small></th>
+							<th scope="row"><small>Plans</small></th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr class="text-center">
+							<th>1</th>
+							<td>Completion of Construction of Health Science Building-Phase2</small></td>
+							<td>UGX</td>
+							<td>1,530,000,000</td>
+							<td>GOU</td>
+							<td>ODB</td>
+							<td>Admeasurement</td>
+							<td>NO</td>
+							<td>N/A</td>
+							<td>N/A</td>
+							<td>NA</td>
+							<td>NA</td>
+							<td>NA</td>
+							<td>30-jun-2020</td>
+							<td>
+								<button class="btn btn-info btn-sm shadow" type="button" data-toggle="collapse" data-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1"><span class="fa fa-navicon"></span></button>
+							</td>
+						</tr>
+
+						<tr>
+							<td></td>
+							<td colspan="14">
+								<div class="collapse multi-collapse" id="multiCollapseExample1">
+									<table class="table table-sm table-responsive-sm table-hover border">
+										<thead>
+											<th><small>No</small></th>
+											<th><small>Chart of Account</small></th>
+											<th><small>Procurement Type</small></th>
+											<th><small>Subject</small></th>
+											<th><small>Quantity</small></th>
+											<th><small>Unit</small></th>
+											<th><small>Estimated Cost</small></th>
+											<th><small>Funding</small></th>
+											<th colspan="4"><small>Date Required</small></th>
+											<th><small id="statusBox{{plan.id}}">Status</small></th>
+											<th><small>Department</small></th>
+										</thead>
+										
+										<tbody>
+											{% for plan in entity_plans %}
+												<tr id="row{{plan.id}}" class="{% if plan.consolidate %}table-info{% elif plan.pdu_approved %}table-success{% elif plan.hod_approved %}table-primary{% endif %}">
+													<td>{{ forloop.counter }}</td>
+													<td>{{ plan.chart_of_account.code }}</td>
+													<td>{{ plan.type_of_procurement }}</td>
+													<td>{{ plan.subject_of_procurement }}</td>
+													<td>{{ plan.quantity }}</td>
+													<td>{{ plan.unit_of_measure }}</td>
+													<td>{{ plan.estimated_cost }}</td>
+													<td>{{ plan.source_of_funding }}</td>
+													<td>Q1 {% if plan.date_required_q1 %}<span class="fa fa-check"></span>{% endif %}</td>
+													<td>Q2 {% if plan.date_required_q2 %}<span class="fa fa-check"></span>{% endif %}</td>
+													<td>Q3 {% if plan.date_required_q3 %}<span class="fa fa-check"></span>{% endif %}</td>
+													<td>Q4 {% if plan.date_required_q4 %}<span class="fa fa-check"></span>{% endif %}</td>
+													<td id="statusBox{{plan.id}}">{{ plan.status }}</td>
+													<td>{{ plan.user_department }}</td>
+												</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+{% endblock %}
