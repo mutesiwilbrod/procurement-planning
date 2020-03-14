@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 # SYSTEM MODELS
 class Expense(models.Model):
     code = models.CharField(max_length=10)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=128)
 
     def __str__(self):
         return " ".join([self.code, "-", self.name])
@@ -40,6 +40,39 @@ class Entity(models.Model):
     def programmes(self):
         return Programme.objects.filter(entity=self)
 
+
+class ConsolidationGroup(models.Model):
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
+    expense = models.ForeignKey(Expense, on_delete=models.CASCADE)
+    subject_of_procurement = models.CharField(max_length=128, null=True)
+    source_of_funding = models.CharField(max_length=128, null=True)
+    contract_type = models.CharField(max_length=64, null=True)
+    prequalification = models.BooleanField(null=True)
+    bid_invitation_date = models.DateTimeField(null=True)
+    bid_closing_date = models.DateTimeField(null=True)
+    bid_approval_and_evaluation_date = models.DateTimeField(null=True)
+    award_notification_date = models.DateTimeField(null=True)
+    contract_signing_date = models.DateTimeField(null=True)
+    contract_completion_date = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return subject_of_procurement
+
+    def plans(self):
+        return Plan.objects.filter(consolidation_group=self)
+
+    def pdu_approved_plans_for_departments(self, departments):
+        return Plan.objects.filter(user_department__in=departments, chart_of_account=self, pdu_approved=True)
+
+    def method_of_procurement(self):
+        plan_cost = self.total_estimated_cost()
+        if plan_cost < 1000000:
+            return 'Micro Procurement'
+        elif plan_cost < 10000000:
+            return 'RFQ'
+        else:
+            return 'International Bidding'
+            
 
 class Programme(models.Model):
     code = models.CharField(max_length=10)
@@ -203,6 +236,7 @@ class Plan(models.Model):
     date_pdu_approved = models.DateTimeField(null=True)
     date_reverted = models.DateTimeField(null=True)
     date_consolidated = models.DateTimeField(null=True)
+    consolidation_group = models.ForeignKey(ConsolidationGroup, on_delete=models.CASCADE, null=True)
 
     def status(self):
         if self.consolidated:
@@ -246,10 +280,13 @@ class PlanComment(models.Model):
 
 def setup_plan_app():
     import os
-    os.system('rm -rf plan/migrations; mkdir plan/migrations; touch plan/migrations/__init__.py; rm db.sqlite3; python3 manage.py makemigrations; python3 manage.py migrate;')
-
+    # os.system('rm -rf plan/migrations; mkdir plan/migrations; touch plan/migrations/__init__.py; rm db.sqlite3; python3 manage.py makemigrations; python3 manage.py migrate;')
+    os.system('rmdir /s /q plan\migrations& mkdir plan\migrations')
+    file = open('plan/migrations/__init__.py', 'w')
+    file.close()
+    os.system('del db.sqlite3& python manage.py makemigrations plan& python manage.py migrate')
     # CREATE SUPER USER
-    User.objects.create_superuser('admin', 'admin@example.com', '123')
+    # User.objects.create_superuser('admin', 'admin@example.com', '123')
 
     # LOAD SYSTEM DATA
     # 1. expenses
@@ -261,10 +298,11 @@ def setup_plan_app():
     # import json
     # items_file = open('items.json')
     # items = json.loads(items_file.read())
-
+    expenses = []
     for item in items:
         item = Expense(code=item['code'], name=item['name'])
         item.save()
+        expenses.append(item)
 
     # 2. procurement types
     procurement_types = ["Supplies", "Works", "Non-consultancy Services", "Consultancy Services"]
@@ -275,6 +313,10 @@ def setup_plan_app():
     # LOAD ENTITY DATA
     # 1. entity
     muni_entity = Entity(code="MU127", name="Muni University"); muni_entity.save()
+
+    for expense in expenses:
+        group = ConsolidationGroup(subject_of_procurement=expense.name, entity=muni_entity, expense=expense)
+        group.save()
 
     # 2. programs
     p1 = Programme(code="0751", name="Delivery of Tertiary Education and Research", entity=muni_entity); p1.save()

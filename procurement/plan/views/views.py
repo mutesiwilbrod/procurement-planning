@@ -277,6 +277,7 @@ def pdu_approve_plan(request, id):
             # update plan
             plan.pdu_approved = False
             plan.date_pdu_approved = None
+            plan.consolidation_group = null
             plan.save()
             # save action
             action = PlanAction(action="PDU Unapprove", plan=plan, member=user.profile.member)
@@ -289,6 +290,8 @@ def pdu_approve_plan(request, id):
             # update plan
             plan.pdu_approved = True
             plan.date_pdu_approved = datetime.now()
+            consolidation_group = ConsolidationGroup.objects.get(expense=plan.chart_of_account)
+            plan.consolidation_group = consolidation_group
             plan.save()
             # save action
             action = PlanAction(action="PDU Approved", plan=plan, member=user.profile.member)
@@ -355,9 +358,39 @@ def revert_plan(request, id):
 def plan_consolidation(request):
     user = get_user(request)
     entity = user.profile.member.user_department.sub_programme.programme.entity
-    consolidated_plans = get_consolidated_plans(entity)
+    groups = ConsolidationGroup.objects.filter(entity=entity)
+
     context = {
-        "entity_plans": consolidated_plans
+        "groups" : groups
     }
-    print(consolidated_plans)
+
     return render(request, "user_department/consolidation.html", context)
+
+
+@login_required
+def edit_consolidation_group(request, id):
+    if request.method == 'POST':
+        subject_of_procurement = request.POST['subject_of_procurement']
+        contract_type = request.POST['contract_type']
+        prequalification = request.POST.get('prequalification')
+        bid_invitation_date = request.POST['bid_invitation_date']
+        bid_opening_date = request.POST['bid_opening_date']
+        approval_of_bid_evaluation_date = request.POST['approval_of_bid_evaluation_date']
+        award_notification_date = request.POST['award_notification_date']
+        contract_signing_date = request.POST['contract_signing_date']
+        contract_completion_date = request.POST['contract_completion_date']
+
+        group = ConsolidationGroup.objects.get(id=id)
+        group.subject_of_procurement = subject_of_procurement
+        group.contract_type = contract_type
+        if prequalification: group.prequalification = True
+        else: group.prequalification = False
+        if bid_invitation_date: group.bid_invitation_date = bid_invitation_date
+        if bid_opening_date: group.bid_closing_date = bid_opening_date
+        if approval_of_bid_evaluation_date: group.bid_approval_and_evaluation_date = approval_of_bid_evaluation_date
+        if award_notification_date: group.award_notification_date = award_notification_date
+        if contract_signing_date: group.contract_signing_date = contract_signing_date
+        if contract_completion_date: group.contract_completion_date = contract_completion_date
+        group.save()
+
+    return redirect('plan:plan_consolidation')

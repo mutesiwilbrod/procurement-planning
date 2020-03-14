@@ -4,11 +4,11 @@
 
 {% block content %}
 	{% with plans=department.plans approved_plans=department.approved_plans unapproved_plans=department.unapproved_plans %}
-		<div class="container-fluid pt-2">
+		<div class="container-fluid pt-1">
 			<div class="row">			
 				<div class="{% if plan_item %}col-md-9{% else %}col-md-12{% endif %}">
 					<div class="row">
-						<div class="col-md-2 my-auto"><h2>Departmental Plan</h2></div>
+						<div class="col-md-2 my-auto"><h5>Department Plan</h5></div>
 						<div class="col-md-5 d-flex flex-row">
 							<div class="card p-2 {% if department.plan_prepared %}border-info{% else %}border-0{% endif %} my-auto">
 								Preparation

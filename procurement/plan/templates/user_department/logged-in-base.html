@@ -97,8 +97,8 @@
 	<div class="row">
 		{% if messages %}
 			{% for message in messages %}
-				<div class="w-100 alert alert-{{ message.tags }} text-center font-weight-bold alert-dismissible">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<div class="w-100 p-0 alert alert-{{ message.tags }} text-center font-weight-bold alert-dismissible">
+					<button type="button" class="close p-0" data-dismiss="alert" aria-label="Close">
 						<span aria-hidden="true">&times</span>
 					</button>
 					{{ message }} 

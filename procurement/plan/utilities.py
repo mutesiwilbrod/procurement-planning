@@ -22,5 +22,5 @@ def get_consolidated_plans(entity):
     expenses = Expense.objects.all()
     consolidated_plans = []
     for expense in expenses:
-        consolidated_plans.append((expense, expense.plans_for_departments(departments)))
+        consolidated_plans.append((expense, expense.pdu_approved_plans_for_departments(departments)))
     return consolidated_plans

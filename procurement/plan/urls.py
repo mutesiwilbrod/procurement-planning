@@ -27,6 +27,7 @@ urlpatterns = [
     path('revert-plan/<int:id>', views.revert_plan, name='revert_plan'),
 
     path('plan-consolidation', views.plan_consolidation, name='plan_consolidation'),
+    path('edit-consolidation-group/<int:id>', views.edit_consolidation_group, name='edit_consolidation_group'),
 
     path('roles', role_views.roles, name='roles'),
     path('assign-reparation-role/', role_views.assign_preparation_role, name='assign_preparation_role'),

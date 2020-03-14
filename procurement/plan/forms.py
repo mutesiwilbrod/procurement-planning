@@ -15,3 +15,12 @@ class PlanItemForm(forms.Form):
     date_required_q2 = forms.BooleanField(required=False)
     date_required_q3 = forms.BooleanField(required=False)
     date_required_q4 = forms.BooleanField(required=False)
+
+
+class PlanConsolidationForm(forms.Form):
+    prequalification = forms.BooleanField()
+    bid_invitation_date = forms.DateField()
+    bid_closing_date = forms.DateField()
+    approval_of_evaluation_date = forms.DateField()
+    contract_signing_date = forms.DateField()
+    contract_completion_date = forms.DateField()

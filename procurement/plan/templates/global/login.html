@@ -31,14 +31,14 @@
 							{% csrf_token %}
 							<input type="hidden" name="username" value="pdu1@muni.ac.ug">
 							<input type="hidden" name="password" value="123">
-							<button class="btn btn-danger btn-block">Head of PDU <span class="fa fa-sign-in"></span></button>
+							<button class="btn btn-info btn-block">Head of PDU <span class="fa fa-sign-in"></span></button>
 						</form>
 
 						<form method="POST" action="{% url 'plan:login' %}">
 							{% csrf_token %}
 							<input type="hidden" name="username" value="pdu2@muni.ac.ug">
 							<input type="hidden" name="password" value="123">
-							<button class="btn btn-danger btn-block w-75">Member of PDU <span class="fa fa-sign-in"></span></button>
+							<button class="btn btn-info btn-block w-75">Member of PDU <span class="fa fa-sign-in"></span></button>
 						</form>
 
 						<hr>
