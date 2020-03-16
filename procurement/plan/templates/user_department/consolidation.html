@@ -14,21 +14,21 @@
 				<table class="table table-sm table-bordered">
 					<thead>
 						<tr class="text-center">
-							<th scope="col"><small>No</small></th>
-							<th scope="col"><small>Subject of Procuremet</small></th>
-							<th scope="col"><small>Currency</small></th>
-							<th scope="col"><small>Estimated Cost</small></th>
-							<th scope=""><small>Source of Funding</small></th>
-							<th scope=""><small>Procurement Method</small></th>
-							<th scope=""><small>Contract Type</small></th>
-							<th scope=""><small>Prequalification (YES/NO)</small></th>
-							<th scope=""><small>Bid Invitation Date</small></th>
-							<th scope=""><small>Bid Closing/Opening Date</small></th>
-							<th scope=""><small>Approval Evaluation Date</small></th>
-							<th scope=""><small>Award Notification Date</small></th>
-							<th scope=""><small>Contract Signing Date</small></th>
-							<th scope=""><small>Completion Date</small></th>
-							<th scope="row"><small>Plans</small></th>
+							<th><small>No</small></th>
+							<th><small>Subject of Procuremet</small></th>
+							<th><small>Currency</small></th>
+							<th><small>Estimated Cost</small></th>
+							<th><small>Source of Funding</small></th>
+							<th><small>Procurement Method</small></th>
+							<th><small>Contract Type</small></th>
+							<th><small>Prequalification (YES/NO)</small></th>
+							<th><small>Bid Invitation Date</small></th>
+							<th><small>Bid Closing/Opening Date</small></th>
+							<th><small>Approval Evaluation Date</small></th>
+							<th><small>Award Notification Date</small></th>
+							<th><small>Contract Signing Date</small></th>
+							<th><small>Completion Date</small></th>
+							<th><small>Plans</small></th>
 							<th><small></small></th>
 						</tr>
 					</thead>
@@ -37,8 +37,8 @@
 						{% for group in groups %}
 							{% with plans=group.plans %}
 								{% if plans|length %}
-									<tr class="text-center">
-										<th>{{ forloop.counter }}</th>
+									<tr class="text-center {% if not group.isValid %}table-danger{% endif %}">
+										<th>{{ forloop.counter }} {{group.isValid}}</th>
 
 										<td>{{ group.subject_of_procurement }}</td>
 										
@@ -56,15 +56,15 @@
 										
 										<td>{% if group.bid_invitation_date %}{{group.bid_invitation_date}}{% else %}.....{% endif %}</td>
 										
-										<td>{% if group.bid_closing_date %}{{group.bid_closing_date}}{% else %}.....{% endif %}</td>
+										<td>{% if group.bid_opening_and_closing_date %}{{group.bid_opening_and_closing_date}}{% else %}.....{% endif %}</td>
 										
-										<td>{% if group.bid_approval_and_evaluation_date %}{{group.bid_approval_and_evaluation_date}}{% else %}.....{% endif %}</td>
+										<td>{% if group.approval_of_bid_evaluation_date %}{{group.approval_of_bid_evaluation_date}}{% else %}.....{% endif %}</td>
+
+										<td>{% if group.award_notification_date %}{{group.award_notification_date}}{% else %}.....{% endif %}</td>
 										
 										<td>{% if group.contract_signing_date %}{{group.contract_signing_date}}{% else %}.....{% endif %}</td>
 										
 										<td>{% if group.contract_completion_date %}{{group.contract_completion_date}}{% else %}.....{% endif %}</td>
-										
-										<td>{% if group.award_notification_date %}{{group.award_notification_date}}{% else %}.....{% endif %}</td>
 										
 										<td>
 											<button class="btn btn-info btn-sm shadow rounded-circle shadow" type="button" data-toggle="collapse" data-target="#consolidationGroup{{group.id}}" aria-expanded="false" aria-controls="consolidationGroup{{group.id}}">{{plans|length}}</button>
@@ -110,12 +110,12 @@
 
 																	<div class="col-md-6 form-group">
 																		<small>Bid Opening/Closing Date</small>
-																		<input type="date" class="form-control" name="bid_opening_date" value="{% if group.bid_closing_date %}{{group.bid_closing_date|html_date}}{% endif %}" />
+																		<input type="date" class="form-control" name="bid_opening_date" value="{% if group.bid_opening_and_closing_date %}{{group.bid_opening_and_closing_date|html_date}}{% endif %}" />
 																	</div>
 
 																	<div class="col-md-6 form-group">
 																		<small>Approval of Bid Evaluation Date</small>
-																		<input type="date" class="form-control" name="approval_of_bid_evaluation_date" value="{% if group.bid_approval_and_evaluation_date %}{{group.bid_approval_and_evaluation_date|html_date}}{% endif %}"/>
+																		<input type="date" class="form-control" name="approval_of_bid_evaluation_date" value="{% if group.approval_of_bid_evaluation_date %}{{group.approval_of_bid_evaluation_date|html_date}}{% endif %}"/>
 																	</div>
 																	<div class="col-md-6 form-group">
 																		<small>Award Notification Date</small>

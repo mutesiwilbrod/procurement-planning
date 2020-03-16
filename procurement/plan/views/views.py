@@ -374,7 +374,7 @@ def edit_consolidation_group(request, id):
         contract_type = request.POST['contract_type']
         prequalification = request.POST.get('prequalification')
         bid_invitation_date = request.POST['bid_invitation_date']
-        bid_opening_date = request.POST['bid_opening_date']
+        bid_opening_and_closing_date = request.POST['bid_opening_date']
         approval_of_bid_evaluation_date = request.POST['approval_of_bid_evaluation_date']
         award_notification_date = request.POST['award_notification_date']
         contract_signing_date = request.POST['contract_signing_date']
@@ -385,12 +385,18 @@ def edit_consolidation_group(request, id):
         group.contract_type = contract_type
         if prequalification: group.prequalification = True
         else: group.prequalification = False
-        if bid_invitation_date: group.bid_invitation_date = bid_invitation_date
-        if bid_opening_date: group.bid_closing_date = bid_opening_date
-        if approval_of_bid_evaluation_date: group.bid_approval_and_evaluation_date = approval_of_bid_evaluation_date
-        if award_notification_date: group.award_notification_date = award_notification_date
-        if contract_signing_date: group.contract_signing_date = contract_signing_date
-        if contract_completion_date: group.contract_completion_date = contract_completion_date
+        if not bid_invitation_date: bid_invitation_date = None
+        if not bid_opening_and_closing_date: bid_opening_and_closing_date = None
+        if not approval_of_bid_evaluation_date: approval_of_bid_evaluation_date = None
+        if not award_notification_date: award_notification_date = None
+        if not contract_signing_date: contract_signing_date = None
+        if not contract_completion_date: contract_completion_date = None
+        group.bid_invitation_date = bid_invitation_date
+        group.bid_opening_and_closing_date = bid_opening_and_closing_date
+        group.approval_of_bid_evaluation_date = approval_of_bid_evaluation_date
+        group.award_notification_date = award_notification_date
+        group.contract_signing_date = contract_signing_date
+        group.contract_completion_date = contract_completion_date
         group.save()
 
     return redirect('plan:plan_consolidation')

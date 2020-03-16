@@ -49,8 +49,8 @@ class ConsolidationGroup(models.Model):
     contract_type = models.CharField(max_length=64, null=True)
     prequalification = models.BooleanField(null=True)
     bid_invitation_date = models.DateTimeField(null=True)
-    bid_closing_date = models.DateTimeField(null=True)
-    bid_approval_and_evaluation_date = models.DateTimeField(null=True)
+    bid_opening_and_closing_date = models.DateTimeField(null=True)
+    approval_of_bid_evaluation_date = models.DateTimeField(null=True)
     award_notification_date = models.DateTimeField(null=True)
     contract_signing_date = models.DateTimeField(null=True)
     contract_completion_date = models.DateTimeField(null=True)
@@ -72,7 +72,18 @@ class ConsolidationGroup(models.Model):
             return 'RFQ'
         else:
             return 'International Bidding'
-            
+    
+    def isValid(self):
+        if not (self.subject_of_procurement and self.contract_type and self.prequalification!=None):
+            return False
+        if self.bid_invitation_date and self.bid_opening_and_closing_date and self.approval_of_bid_evaluation_date and self.award_notification_date and self.contract_signing_date and self.contract_completion_date:
+            if self.bid_invitation_date < self.bid_opening_and_closing_date < self.approval_of_bid_evaluation_date < self.award_notification_date < self.contract_signing_date < self.contract_completion_date:
+                return True
+            else:
+                return False
+        else:
+            return False
+        return True
 
 class Programme(models.Model):
     code = models.CharField(max_length=10)
@@ -280,13 +291,17 @@ class PlanComment(models.Model):
 
 def setup_plan_app():
     import os
+    # LINUX
     # os.system('rm -rf plan/migrations; mkdir plan/migrations; touch plan/migrations/__init__.py; rm db.sqlite3; python3 manage.py makemigrations; python3 manage.py migrate;')
+    
+    # WINDOWS
     os.system('rmdir /s /q plan\migrations& mkdir plan\migrations')
     file = open('plan/migrations/__init__.py', 'w')
     file.close()
     os.system('del db.sqlite3& python manage.py makemigrations plan& python manage.py migrate')
+    
     # CREATE SUPER USER
-    # User.objects.create_superuser('admin', 'admin@example.com', '123')
+    User.objects.create_superuser('admin', 'admin@example.com', '123')
 
     # LOAD SYSTEM DATA
     # 1. expenses
