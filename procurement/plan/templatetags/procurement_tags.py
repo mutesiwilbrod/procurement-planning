@@ -6,7 +6,7 @@ register = template.Library()
 @register.filter(name="comma_separator")
 def comma_separator(value):
 	if isinstance(value, int):
-		return f'{value:,}' + ' UGX'
+		return f'{value:,}'
 	return value
 
 
@@ -48,6 +48,7 @@ def consolidated_source_of_funding(plans):
 	if len(plans):
 		return set([plan.source_of_funding for plan in plans])
 	return '....'
+
 
 @register.filter(name="consolidated_procurement_method")
 def consolidated_procurement_method(plan_cost):

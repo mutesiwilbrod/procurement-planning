@@ -56,7 +56,7 @@ class ConsolidationGroup(models.Model):
     contract_completion_date = models.DateTimeField(null=True)
 
     def __str__(self):
-        return subject_of_procurement
+        return self.subject_of_procurement
 
     def plans(self):
         return Plan.objects.filter(consolidation_group=self)
@@ -64,14 +64,20 @@ class ConsolidationGroup(models.Model):
     def pdu_approved_plans_for_departments(self, departments):
         return Plan.objects.filter(user_department__in=departments, chart_of_account=self, pdu_approved=True)
 
+    def total_estimated_cost(self):
+        plans = self.plans()
+        return sum([plan.estimated_cost for plan in plans])
+
     def method_of_procurement(self):
         plan_cost = self.total_estimated_cost()
-        if plan_cost < 1000000:
-            return 'Micro Procurement'
-        elif plan_cost < 10000000:
+        if plan_cost < 500000:
             return 'RFQ'
+        elif plan_cost < 5000000:
+            return 'Micro Procurement'
+        elif plan_cost < 100000000:
+            return 'DP'
         else:
-            return 'International Bidding'
+            return 'Open Domestic Bidding'
     
     def isValid(self):
         if not (self.subject_of_procurement and self.contract_type and self.prequalification!=None):
@@ -292,13 +298,13 @@ class PlanComment(models.Model):
 def setup_plan_app():
     import os
     # LINUX
-    # os.system('rm -rf plan/migrations; mkdir plan/migrations; touch plan/migrations/__init__.py; rm db.sqlite3; python3 manage.py makemigrations; python3 manage.py migrate;')
+    os.system('rm -rf plan/migrations; mkdir plan/migrations; touch plan/migrations/__init__.py; rm db.sqlite3; python3 manage.py makemigrations; python3 manage.py migrate;')
     
     # WINDOWS
-    os.system('rmdir /s /q plan\migrations& mkdir plan\migrations')
-    file = open('plan/migrations/__init__.py', 'w')
-    file.close()
-    os.system('del db.sqlite3& python manage.py makemigrations plan& python manage.py migrate')
+    # os.system('rmdir /s /q plan\migrations& mkdir plan\migrations')
+    # file = open('plan/migrations/__init__.py', 'w')
+    # file.close()
+    # os.system('del db.sqlite3& python manage.py makemigrations plan& python manage.py migrate')
     
     # CREATE SUPER USER
     User.objects.create_superuser('admin', 'admin@example.com', '123')

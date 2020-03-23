@@ -38,7 +38,7 @@
 							{% with plans=group.plans %}
 								{% if plans|length %}
 									<tr class="text-center {% if not group.isValid %}table-danger{% endif %}">
-										<th>{{ forloop.counter }} {{group.isValid}}</th>
+										<th>{{ forloop.counter }}</th>
 
 										<td>{{ group.subject_of_procurement }}</td>
 										
@@ -48,7 +48,7 @@
 										
 										<td>{{plans|consolidated_source_of_funding}}</td>
 										
-										<td>{{plans|consolidated_plan_cost|consolidated_procurement_method}}</td>
+										<td>{{group.method_of_procurement}}</td>
 										
 										<td>{% if group.contract_type %}{{group.contract_type}}{% else %}.....{% endif %}</td>
 										
@@ -93,7 +93,12 @@
 
 																<div class="form-group">
 																	<small>Contract Type</small>
-																	<input class="form-control" name="contract_type" value="{% if group.contract_type %}{{group.contract_type}}{% endif %}" />
+
+																	<select class="form-control" name="contract_type">
+																		<option value="Admeasurement">Admeasurement</option>
+																		<option value="Framework">Framework</option>
+																		<option value="Lumpsum">Lumpsum</option>
+																	</select>
 																</div>
 
 

@@ -8,7 +8,7 @@ class PlanItemForm(forms.Form):
     subject_of_procurement = forms.CharField(initial="Rent (Produced Assets) to private entities")
     type_of_procurement = forms.ChoiceField()
     quantity = forms.IntegerField(initial=4)
-    unit = forms.CharField(initial='Qaurters')
+    unit = forms.CharField(initial='Months')
     estimated_cost = forms.IntegerField(initial=5000000)
     source_of_funding = forms.CharField(widget=forms.RadioSelect(choices=sources_of_funding))
     date_required_q1 = forms.BooleanField(required=False)
